@@ -1,18 +1,19 @@
 from groq import Groq
 
 # API 키 입력하는 곳
-groq_api_key = ""
+groq_api_key = "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"
 
+#Groq 설정. 사이트에서 참고
 class ChatBot:
     def __init__(self, engine: str = "llama3-8b-8192") -> None:
         self.model = engine
         self.client = Groq(api_key=groq_api_key)
         self.conversation_history = [
-            {"role": "system", "content": "넌 이것저것 도와줘야 해."}
+            {"role": "system", "content": "You will print out the lines of the game NPC from now on. I will give you the information and situation information of the NPC, so please make a comprehensive judgment and simply write down the lines that the NPC will do in one sentence in a large quotation mark."}
         ]  # 역할 설정
 
     def send_message(self, message: str) -> str:
-        assistant_response = ""
+        assistant_response = "" #초기화
         self.conversation_history.append({"role": "user", "content": message})
         
         try:
