@@ -1,16 +1,23 @@
 from groq import Groq
 
 # API 키 입력하는 곳
-groq_api_key = "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"
+groq_api_key = ""
+
+class CsvReader:
+    def __init__(self):
+        pass
 
 #Groq 설정. 사이트에서 참고
 class ChatBot:
-    def __init__(self, engine: str = "llama3-8b-8192") -> None:
+    def __init__(self, engine: stwr = "llama3-8b-8192") -> None:
         self.model = engine
         self.client = Groq(api_key=groq_api_key)
         self.conversation_history = [
             {"role": "system", "content": "You will print out the lines of the game NPC from now on. I will give you the information and situation information of the NPC, so please make a comprehensive judgment and simply write down the lines that the NPC will do in one sentence in a large quotation mark."}
         ]  # 역할 설정
+
+    def set_message(self):
+        pass
 
     def send_message(self, message: str) -> str:
         assistant_response = "" #초기화
