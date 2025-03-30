@@ -1,0 +1,7 @@
+[
+    {
+        "ScenarioName" : "Sample Scenario",
+        "ScriptList" : ["Say hello to someone you've never seen before.","Say hello","Ask what role you want to play in group activities.","Saying It doesn't matter.","Ask if you've read a book for group activities.","He says he didn't read it confidently.","Ask if you brought a book.","They say they didn't because it was more fun to play than group activities.","Saying but the teacher gave us homework to do it together.","Even if it's not him there are many people who can do it for him and he says he wants to play."],
+        "OrderList" : ["NPC2","NPC1","NPC2","NPC1","NPC2","NPC1","NPC2","NPC1","NPC2","NPC1","NPC2","NPC1"]
+    }
+]

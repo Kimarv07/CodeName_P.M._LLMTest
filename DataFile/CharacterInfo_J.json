@@ -1,0 +1,12 @@
+[
+    {
+        "name" : "NPC1",
+        "personality" : ["a love of playing games","a dislike of studying","a strong opinion of oneself"],
+        "speech" : ["a strong tone"]
+    },
+    {
+        "name" : "N2",
+        "personality" : ["being passive","Importance of being together","righteousness"],
+        "speech" : ["a tone of lack of confidence"]  
+    }
+]

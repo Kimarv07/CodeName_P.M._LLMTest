@@ -1,43 +1,66 @@
 from groq import Groq
 import csv
 from typing import List, Dict, Any
-from pathlib import Path
 
 # API 키 입력하는 곳
 groq_api_key = ""
 
+#시나리오 리스트 저장용 DataClass
+class SceneInfo:
+    ScenarioText = []
+    ScenarioOrder = []
+    Npc1Info = []
+    Npc2Info = []
+
 class CsvReader:
-    def __init__(self, file_path: str, list_columns: List[str] = None, delimiter: str = ','):
+    def __init__(self, file_path: str, list_columns: List[str] = None):
         self.file_path = file_path
         self.list_columns = list_columns if list_columns else []
-        self.delimiter = delimiter
         self.data = self._read_csv()
     
     def _read_csv(self) -> List[Dict[str, Any]]:
         #CSV 파일을 읽어 리스트의 딕셔너리 형태로 반환
         data = []           #새 리스트 생성
         with open(self.file_path, mode='r', encoding='utf-8') as file:
-            reader = csv.DictReader(file, delimiter=self.delimiter)
-            for row in reader:
+            for row in data:
                 for col in self.list_columns:
-                    if col in row:
+                    if col in row and isinstance(row[col], str):
                         row[col] = row[col].strip('[]').split(';')
                         row[col] = [item.strip('"') for item in row[col] if item.strip()]
-                data.append(row)
         return data
     
     def get_data(self) -> List[Dict[str, Any]]:
         #읽은 데이터 반환
         return self.data
     
+    # 각 행(row)에 대해 주어진 조건 함수를 실행하여 조건을 만족하는 행만 반환
     def filter_rows(self, condition_func) -> List[Dict[str, Any]]:
-        # 각 행(row)에 대해 주어진 조건 함수를 실행하여 조건을 만족하는 행만 반환
         filtered_data = [row for row in self.data if condition_func(row)]
         return filtered_data
+    
+    # 특정 조건을 만족하는 행에서 특정 속성(column) 값만 리스트로 반환하는 함수
+    def get_column_values(self, condition_func, column_name: str):
+        return [row[column_name] for row in self.data if condition_func(row)]
+    
+def GetScenarioInfo(self):
+    file_path = "DataFile\ScenarioInfo.csv"
+    reader = CsvReader(file_path, list_columns=["ScriptList", "OrderList"])
+    
+    SceneInfo.ScenarioText = reader.filter_rows(lambda row: 'Sample Scenario' in row['ScenarioName'])
 
+def GetNpcInfo(self):
+    file_path = "DataFile\CharcterInfo.csv"
+    reader = CsvReader(file_path, list_columns=["personality", "speech"])
 
+    # 특정 조건에 맞는 행만 필터링
+    SceneInfo.Npc1Info = reader.filter_rows(lambda row: 'NPC1' in row['name'])
+    SceneInfo.Npc2Info = reader.filter_rows(lambda row: 'NPC2' in row['name'])
 
-#Groq 설정. 사이트에서 참고
+    # 결과 출력quit
+    print("NPC1 List:", SceneInfo.Npc1Info)
+    print("NPC2 List:", SceneInfo.Npc2Info)
+
+# Groq 설정. 사이트에서 참고
 class ChatBot:
     def __init__(self, engine: str = "llama3-8b-8192") -> None:
         self.model = engine
@@ -73,22 +96,8 @@ class ChatBot:
         return assistant_response
 
 
+
 def main():
-    file_path = "CSV\CharcterInfo.csv"
-    reader = CsvReader(file_path, list_columns=["personality", "speech"])
-    data = reader.get_data()
-    print(data)
-
-     # 특정 조건에 맞는 행만 필터링 (예: tags가 'NPC1'인 행만 찾기)
-    filtered_rows = reader.filter_rows(lambda row: 'NPC1' in row['name'])
-    
-    # 필터링된 데이터를 다른 리스트에 저장
-    other_list = [row for row in filtered_rows]
-
-    # 결과 출력
-    print("Filtered Rows:", filtered_rows)
-    print("Other List:", other_list)
-
     print("Welcome to ChatBot! Type 'quit' to exit.")
     chatbot = ChatBot()
 
@@ -100,7 +109,6 @@ def main():
             pass
         response = chatbot.send_message(user_input)
         print("ChatBot:", response)
-        
 
 if __name__ == "__main__":
     main()
