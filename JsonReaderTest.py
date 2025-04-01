@@ -12,6 +12,8 @@ class SceneInfo:
     Npc1Info = []
     Npc2Info = []
 
+    LLMPrompt = []
+
 class JSONReader:
     def __init__(self, file_path: str, list_columns: List[str] = None):
         """
@@ -62,8 +64,15 @@ class ChatBot:
             {"role": "system", "content": "You will print out the lines of the game NPC from now on. I will give you the information and situation information of the NPC, so please make a comprehensive judgment and simply write down the lines that the NPC will do in one sentence in a large quotation mark."}
         ]  # 역할 설정
 
-    def set_message(self):
-        pass
+    def set_message(self, CurSceneNum:int):
+        scriptlength = len(SceneInfo.ScenarioText)
+
+        if CurSceneNum > scriptlength:
+            print("Script is End.")
+            return
+        SceneInfo.LLMPrompt.append({})
+
+
 
     def send_message(self, message: str) -> str:
         assistant_response = "" #초기화

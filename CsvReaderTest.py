@@ -109,6 +109,3 @@ def main():
             pass
         response = chatbot.send_message(user_input)
         print("ChatBot:", response)
-
-if __name__ == "__main__":
-    main()
