@@ -64,11 +64,14 @@ class ChatBot:
             {"role": "system", "content": "You will print out the lines of the game NPC from now on. I will give you the information and situation information of the NPC, so please make a comprehensive judgment and simply write down the lines that the NPC will do in one sentence in a large quotation mark."}
         ]  # 역할 설정
 
-    def set_message(self):
+    def set_promptMessage(self):
         scriptlength = len(SceneInfo.ScenarioText)
-
+        
         for i in scriptlength:
-            self.conversation_history.append({})
+            SceneInfo.LLMPrompt[i].append({SceneInfo.ScenarioText[i]})
+            SceneInfo.LLMPrompt[i].append({})
+
+
 
     def send_message(self, message: str) -> str:
         assistant_response = "" #초기화
@@ -94,7 +97,7 @@ class ChatBot:
         return assistant_response
 
 if __name__ == "__main__":
-    reader = JSONReader("DataFile\CharacterInfo_J.json", list_columns=["personality", "OrderList"])
+    reader = JSONReader("DataFile\CharacterInfo_J.json", list_columns=["personality", "speech"])
 
     # 전체 데이터 출력
     data = reader.get_data()
