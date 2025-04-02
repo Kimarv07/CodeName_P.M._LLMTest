@@ -9,10 +9,9 @@ groq_api_key = ""
 class SceneInfo:
     ScenarioText = []
     ScenarioOrder = []
-    Npc1Info = []
-    Npc2Info = []
+    NpcData =  List[Dict[str, Any]]
 
-    LLMPrompt = []
+    LLMPrompt = List[List]
 
 class JSONReader:
     def __init__(self, file_path: str, list_columns: List[str] = None):
@@ -66,12 +65,10 @@ class ChatBot:
 
     def set_promptMessage(self):
         scriptlength = len(SceneInfo.ScenarioText)
+        print(scriptlength)
         
-        for i in scriptlength:
-            SceneInfo.LLMPrompt[i].append({SceneInfo.ScenarioText[i]})
-            SceneInfo.LLMPrompt[i].append({})
-
-
+        for i in range(scriptlength):
+            pass
 
     def send_message(self, message: str) -> str:
         assistant_response = "" #초기화
@@ -97,15 +94,23 @@ class ChatBot:
         return assistant_response
 
 if __name__ == "__main__":
-    reader = JSONReader("DataFile\CharacterInfo_J.json", list_columns=["personality", "speech"])
+    NpcReader = JSONReader("DataFile\CharacterInfo_J.json", list_columns=["personality", "speech"])
 
-    # 전체 데이터 출력
-    data = reader.get_data()
-    print("전체 데이터:", data)
+    # 전체 NPC 데이터 출력
+    SceneInfo.NpcData = NpcReader.get_data()
+    print("전체 데이터:", SceneInfo.NpcData)
 
-    # 특정 조건: id가 "1"인 행에서 "tags" 값만 가져오기
-    NPC1_Info = reader.get_column_values(lambda row: row["name"] == "NPC1", "personality")
+    # 특정 조건: name이이 "NPC1"인 행에서 "personality" 값만 가져오기
+    NPC1_Info = NpcReader.get_column_values(lambda row: row["name"] == "NPC1", "personality")
     print("NPC1 infomation:", NPC1_Info)
     if NPC1_Info:
         for personality in NPC1_Info[0]:
             print(personality)
+
+    ScenarioReader = JSONReader("DataFile\ScenarioInfo_J.json", list_columns=["ScriptList","OrderList"])
+    ScenarioData = ScenarioReader.get_data()
+    SceneInfo.ScenarioText = (ScenarioReader.get_column_values(lambda row: row["ScenarioName"] == "Sample Scenario", "ScriptList")[0])
+    print(SceneInfo.ScenarioText)
+    SceneInfo.ScenarioOrder = (ScenarioReader.get_column_values(lambda row: row["ScenarioName"] == "Sample Scenario", "OrderList")[0])
+
+    ChatBot.set_promptMessage(ChatBot)

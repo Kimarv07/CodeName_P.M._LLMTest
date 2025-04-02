@@ -5,7 +5,7 @@
         "speech" : ["a strong tone"]
     },
     {
-        "name" : "N2",
+        "name" : "NPC2",
         "personality" : ["being passive","Importance of being together","righteousness"],
         "speech" : ["a tone of lack of confidence"]  
     }
