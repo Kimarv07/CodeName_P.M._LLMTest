@@ -1,0 +1,12 @@
+{
+    "dialogues": [
+        {
+            "speaker": "NPC2",
+            "text": "I think it would be great if we work together on the group activity. Can't we just get it done?"
+        },
+        {
+            "speaker": "NPC1",
+            "text": "Ugh, why would we want to spend our time studying when"
+        }
+    ]
+}
