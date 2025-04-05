@@ -60,8 +60,9 @@ class ChatBot:
     def __init__(self, engine: str = "llama3-8b-8192") -> None:
         self.model = engine
         self.client = Groq(api_key=groq_api_key)
+        self.promptGuide = "You will generate the dialogue for multiple NPCs. Each NPC's personality and the situation will be given. Use only the NPCs that appear in the conversation to determine their speech. When you talk about the content, use colloquial as if you were actually speaking, and organize the sentence into 1 sentence with words that are easy to understand. Create a conversation for each step of the 'Scenario Progress Order'. Instead of continuing the conversation on your own, make sure you can only create the conversation within the given guide."
         self.conversation_history = [
-            {"role": "system", "content": "You will generate the dialogue for multiple NPCs. Each NPC's personality and the situation will be given. Use only the NPCs that appear in the conversation to determine their speech. When you talk about the content, use colloquial as if you were actually speaking, and organize the sentence into 1 sentence with words that are easy to understand. When creating a conversation, Do not include any of the information provided that corresponds to personality information."}
+            {"role": "system", "content": self.promptGuide}
         ]  # 역할 설정
         self.dialogue_history = []  # 대화 저장 리스트
         self.response_data : List[Tuple[str, str]] = []  # 대화 저장 리스트
@@ -116,7 +117,6 @@ class ChatBot:
         conversation:
         {'\n'.join(dialogue_sequence)}
 
-        Create the conversation that will follow in the same way.
         """.strip()
 
         return prompt_message
@@ -146,6 +146,11 @@ class ChatBot:
                 dialogue_list.append(("Unknown NPC", line))  # 발화자 인식 실패 시
         
         return dialogue_list
+    
+    def reset_conversation_history(self):
+        self.conversation_history = [
+            {"role": "system", "content": self.promptGuide}
+        ]
 
     def send_message(self) -> str:
         self.LLMPrompt = self.set_promptMessage()
@@ -157,8 +162,8 @@ class ChatBot:
                 model=self.model,
                 messages=self.conversation_history,
                 temperature=1,
-                max_completion_tokens=50,
-                top_p=1,
+                max_completion_tokens=1024,
+                top_p=0.7,
                 stream=False,
                 stop=None,
             )
