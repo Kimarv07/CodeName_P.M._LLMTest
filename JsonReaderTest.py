@@ -62,16 +62,16 @@ class ChatBot:
         self.client = Groq(api_key=groq_api_key)
         self.conversation_history = [
             {"role": "system", "content": "You will generate the dialogue for multiple NPCs. Each NPC's personality and the situation will be given. Use only the NPCs that appear in the conversation to determine their speech. When you talk about the content, use colloquial as if you were actually speaking, and organize the sentence into 1 sentence with words that are easy to understand. When creating a conversation, Do not include any of the information provided that corresponds to personality information."}
-        ]  # 역할 설정
+        ]  # 챗봇 기능 / 역할 설정
         self.dialogue_history = []  # 대화 저장 리스트
         self.response_data : List[Tuple[str, str]] = []  # 대화 저장 리스트
 
     def store_response(self, speaker: str, response: str):
-        #LLM의 응답을 발화자 정보와 함께 저장
+        # LLM의 응답을 발화자 정보와 함께 저장
         self.response_data.append({"speaker": speaker, "response": response})  
 
     def store_conversation(self, speaker: str, dialogue: str):
-        #NPC의 대화 내용을 리스트에 저장
+        # NPC의 대화 내용을 JSON에서 추출 후 리스트에 저장
         self.dialogue_history.append({"speaker": speaker, "dialogue": dialogue})
 
     def get_full_response(self):
@@ -79,6 +79,11 @@ class ChatBot:
         return self.response_data
     
     def set_promptMessage(self):
+        """
+        LLM 응답을 위한 프롬프트 메시지 생성
+        JSON 파일에서의 정보를 바탕으로 프롬프트를 생성함.
+        """
+
         script_length = len(SceneInfo.ScenarioText)
         
         if len(SceneInfo.NpcData) == 0 or script_length == 0:
@@ -92,8 +97,8 @@ class ChatBot:
         # 대화 기록 생성
         dialogue_sequence = []
         for i in range(script_length):
-            speaker_name = SceneInfo.ScenarioOrder[i]  # 현재 대화의 발화자
-            situation = SceneInfo.ScenarioText[i]  # 해당 발화자의 상황 설명
+            speaker_name = SceneInfo.ScenarioOrder[i]  # 현재 대화의 발화자 이름
+            situation = SceneInfo.ScenarioText[i]  # 해당 발화자의 상황 설명 텍스트
 
             # 발화자 정보 가져오기
             speaker_info = filtered_npc_data.get(speaker_name, {"personality": "알려지지 않음"})  
