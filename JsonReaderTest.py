@@ -121,7 +121,6 @@ class ChatBot:
         conversation:
         {'\n'.join(dialogue_sequence)}
 
-        Create the conversation that will follow in the same way.
         """.strip()
 
         return prompt_message
@@ -162,7 +161,7 @@ class ChatBot:
                 model=self.model,
                 messages=self.conversation_history,
                 temperature=1,
-                max_completion_tokens=50,
+                max_completion_tokens=2024,
                 top_p=1,
                 stream=False,
                 stop=None,

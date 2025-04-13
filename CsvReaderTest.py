@@ -3,7 +3,7 @@ import csv
 from typing import List, Dict, Any
 
 # API 키 입력하는 곳
-groq_api_key = ""
+groq_api_key = "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"
 
 #시나리오 리스트 저장용 DataClass
 class SceneInfo:
