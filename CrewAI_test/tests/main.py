@@ -39,6 +39,8 @@ Analyse_standard_D={"""I will calmly persuade the child to avoid fighting"""}
 
 # 결과 저장용 딕셔너리
 scores = {"A": [], "B": [], "C": [], "D": [],  "S": []}
+# 성향 확인 저장용 딕셔너리
+social_result = {"So1": [], "So2": [], "So3": [], "So4": [],  "So5": []}
 
 # 5번 반복 실행
 for i in range(3):
@@ -340,10 +342,31 @@ average_scores = {
     k: round(statistics.mean(v), 1) if v else 0.0 for k, v in scores.items()
 }
 
+ansA_weight=[0.33, 0.28, 0.11, 0.05, -0.61]
+ansB_weight=[0.06, -0.01, 0.11, -0.05, 0.75]
+ansC_weight=[0.08, 0.43, 0.16, 0.00, 0.14]
+ansD_weight=[-0.28, 0.52, 0.01, 0.03, -0.12]
+
+#성향 1 가중치: A:33 B:6 C:8 D:-28
+social_result["So1"] = round(((average_scores["A"]*ansA_weight[0])+(average_scores["B"]*ansB_weight[0])+(average_scores["C"]*ansC_weight[0])+(average_scores["D"]*ansD_weight[0]))/4,2)
+
+#성향 2 가중치: A:28 B:-1 C:43 D:52
+social_result["So2"] = round(((average_scores["A"]*ansA_weight[1])+(average_scores["B"]*ansB_weight[1])+(average_scores["C"]*ansC_weight[1])+(average_scores["D"]*ansD_weight[1]))/4,2)
+
+#성향 3 가중치: A:11 B:11 C:16 D:1 
+social_result["So3"] = round(((average_scores["A"]*ansA_weight[2])+(average_scores["B"]*ansB_weight[2])+(average_scores["C"]*ansC_weight[2])+(average_scores["D"]*ansD_weight[2]))/4,2)
+
+#성향 4 가중치: A:5 B:-5 C:0 D:3
+social_result["So4"] = round(((average_scores["A"]*ansA_weight[3])+(average_scores["B"]*ansB_weight[3])+(average_scores["C"]*ansC_weight[3])+(average_scores["D"]*ansD_weight[3]))/4,2)
+
+#성향 5 가중치: A:-61 B:75 C:14 D:-12
+social_result["So5"] = round(((average_scores["A"]*ansA_weight[4])+(average_scores["B"]*ansB_weight[4])+(average_scores["C"]*ansC_weight[4])+(average_scores["D"]*ansD_weight[4]))/4,2)
+
 # 최종 출력
 print("\nFinal Average Similarity Scores:")
 print(f"[A: {average_scores['A']}%, B: {average_scores['B']}%, C: {average_scores['C']}%, D: {average_scores['D']}%, S: {average_scores['S']}%]")
-
+print("\nFinal Social Weighting Scores:")
+print(f"[So1_altruism: {social_result['So1']}%, So2_initiative: {social_result['So2']}%, So3_self-assertion: {social_result['So3']}%, So4_self-restraint: {social_result['So4']}%, So5_Empathy: {social_result['So5']}%]")
 
 output_data = {
     "prompt": prompt_text.strip(),
@@ -355,8 +378,16 @@ output_data = {
         "C": average_scores["C"],
         "D": average_scores["D"],
         "S": average_scores["S"]
+    },
+    "social result": {
+        "So1":social_result["So1"],
+        "So2":social_result["So2"],
+        "So3":social_result["So3"],
+        "So4":social_result["So4"],
+        "So5":social_result["So5"]
     }
 }
+
 
 # 파일로 저장
 with open("child_conflict_analysis_result.json", "w", encoding="utf-8") as f:
