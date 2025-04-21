@@ -21,8 +21,10 @@ What would you do in this situation?
 """
 print(prompt_text)
 
+conflict_response = input("Write down who is in conflict: ")
+cause_response = input("Write down the cause of the conflict: ")
+subject_response = input("Write down what the subject of conflict is: ")
 child_response = input("Enter the child's proposed resolution method: ")
-situation_response = input("What do you think is happening in this situation?: ")
 
 #답변 기준(DB에서 받아올 예정)
 
@@ -36,6 +38,9 @@ Analyse_standard_A={"""Because habits need to be fixed, I will say it no matter 
 Analyse_standard_B={"""Because I don't like not fighting with friends, I will just ignore it."""}
 Analyse_standard_C={"""I will do it instead of my friend."""}
 Analyse_standard_D={"""I will calmly persuade the child to avoid fighting"""}
+Analyse_conflict={"NPC1 and NPC2"}
+Analyse_cause={"What should I do to a friend who is playing with no group activities?"}
+Analyse_subject={"One member of the class project team didn't do any activities."}
 
 # 결과 저장용 딕셔너리
 scores = {"A": [], "B": [], "C": [], "D": [],  "S": []}
@@ -60,55 +65,74 @@ for i in range(3):
     )
 
     Analyst_B = Agent(
-    role="Senior Sentence Sentiment Analyst_B",
-    goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_standard_B}' and express the similarity as a percentage (rounded to one decimal place).",
-    backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
-    Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
-    not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
-    You must express the similarity as a percentage, rounded to one decimal place.""",
-    verbose=False,
-    allow_delegation=False,
+        role="Senior Sentence Sentiment Analyst_B",
+        goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_standard_B}' and express the similarity as a percentage (rounded to one decimal place).",
+        backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
+        Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
+        not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
+        You must express the similarity as a percentage, rounded to one decimal place.""",
+        verbose=False,
+        allow_delegation=False,
     )
 
     Analyst_C = Agent(
-    role="Senior Sentence Sentiment Analyst_C",
-    goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_standard_C}' and express the similarity as a percentage (rounded to one decimal place).",
-    backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
-    Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
-    not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
-    You must express the similarity as a percentage, rounded to one decimal place.""",
-    verbose=False,
-    allow_delegation=False,
+        role="Senior Sentence Sentiment Analyst_C",
+        goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_standard_C}' and express the similarity as a percentage (rounded to one decimal place).",
+        backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
+        Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
+        not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
+        You must express the similarity as a percentage, rounded to one decimal place.""",
+        verbose=False,
+        allow_delegation=False,
     )
 
     Analyst_D = Agent(
-    role="Senior Sentence Sentiment Analyst_D",
-    goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_standard_D}' and express the similarity as a percentage (rounded to one decimal place).",
-    backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
-    Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
-    not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
-    You must express the similarity as a percentage, rounded to one decimal place.""",
-    verbose=False,
-    allow_delegation=False,
-    )
-    Recorder = Agent(
-    role="Analysis Recorder",
-    goal="Compile and present the similarity results from all analysts.",
-    backstory="""You are responsible for collecting and summarizing the similarity percentage results.
-    Your task is to present a structured summary without additional explanations.""",
-    verbose=False,
-    allow_delegation=False,
+        role="Senior Sentence Sentiment Analyst_D",
+        goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_standard_D}' and express the similarity as a percentage (rounded to one decimal place).",
+        backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
+        Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
+        not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
+        You must express the similarity as a percentage, rounded to one decimal place.""",
+        verbose=False,
+        allow_delegation=False,
     )
 
-    Scenario_Analyst = Agent(
-    role="Scenario Understanding Analyst",
-    goal="Evaluate how well the child understands the described group conflict scenario and express it as a percentage (rounded to one decimal place).",
-    backstory="""You are an expert in analyzing how deeply children understand social and interpersonal situations.
-    Your role is to assess how well the child's resolution method reflects an accurate and thoughtful grasp of the situation's core problem, including group dynamics and fairness.
-    You will return a similarity percentage that represents the level of situation understanding, rounded to one decimal place.""",
-    verbose=False,
-    allow_delegation=False,
+    Analyst_conflict = Agent(
+        role="Senior Sentence Sentiment Analyst_conflict",
+        goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_conflict}' and express the similarity as a percentage (rounded to one decimal place).",
+        backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
+        Your role is to check if you have answered the right questions.
+        The order may be changed, but in the case of an answer that deviates from the existing answer, a name that does not exist may be mentioned or a name that should be mentioned is omitted, and the wrong answer may be processed.""",
+        verbose=False,
+        allow_delegation=False,)
+
+    Analyst_cause = Agent(
+        role="Senior Sentence Sentiment Analyst_cause",
+        goal=f"Check the following answers and '{Analyse_cause}', determine whether they are correct or not and mark Yes or No.",
+        backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
+        Your role is to check if you have answered the right questions.
+        The order may be changed, but in the case of an answer that deviates from the existing answer, a name that does not exist may be mentioned or a name that should be mentioned is omitted, and the wrong answer may be processed.""",
+        verbose=False,
+        allow_delegation=False,)
+    
+    Analyst_subject = Agent(
+        role="Senior Sentence Sentiment Analyst_subject",
+        goal=f"Check the following answers and '{Analyse_subject}', determine whether they are correct or not and mark Yes or No.",
+        backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
+        Your role is to check if you have answered the right questions.
+        Minor content may be wrong, but if the content deviates too much, the wrong answer should be processed.""",
+        verbose=False,
+        allow_delegation=False,)
+    
+    Recorder = Agent(
+        role="Analysis Recorder",
+        goal="Compile and present the similarity results from all analysts.",
+        backstory="""You are responsible for collecting and summarizing the similarity percentage results.
+        Your task is to present a structured summary without additional explanations.""",
+        verbose=False,
+        allow_delegation=False,
     )
+
 
 
     # 작업 정의
@@ -202,10 +226,10 @@ The value must be within the range of 5.0 to 95.9.
     - **Very Low Similarity (0-19%)**: The response strongly encourages the person to participate and avoids doing the task alone.  
 
     **Format:**  
-Provide a single numerical value as a percentage (%), measured precisely.
-The output MUST be in the format: XX.X%.
-Do NOT include explanations, analysis, or any additional text.
-The value must be within the range of 5.0 to 95.9.
+    Provide a single numerical value as a percentage (%), measured precisely.
+    The output MUST be in the format: XX.X%.
+    Do NOT include explanations, analysis, or any additional text.
+    The value must be within the range of 5.0 to 95.9.
     """,
     agent=Analyst_C,
     expected_output="XX.X"
@@ -244,75 +268,69 @@ The value must be within the range of 5.0 to 95.9.
     expected_output="XX.X"
     )
 
-    
-    Scenario_Analysis = Task(
-    description=f"""
-    **Task:**  
-    Evaluate the following description provided by the child about the situation:  
-    '**{situation_response}**'
+    Analyze_conflict = Task(
+        description=f"""
+        **Task:**  
+        Analyze the provided resolution method:  
+        '**{conflict_response}**'
 
-    **Context Recap:**  
-    {Recap}
+        Compare it to the target resolution strategy:  
+        '**{Analyse_conflict}**'
 
-    **Evaluation Criteria (Key Aspects of Situation Understanding):**  
-    1. Identification of the core problem: Has the child recognized the main conflict or issue?  
-    2. Understanding of roles and behaviors: Does the child show awareness of who is involved and what actions were taken?  
-    3. Recognition of emotions and reactions: Has the child identified how people are feeling or responding to the situation?  
-    4. Awareness of relational context: Does the child understand the relationships or dynamics between people involved (e.g., closeness, power, responsibility)?  
-    5. Anticipation of outcomes or potential conflict: Does the child consider what might happen next or recognize possible consequences?
 
-    **Scoring Guide:**  
-
-    - **Very High (80–100%)**  
-    - The child clearly addresses at least four or three of the five key aspects  
-    - Demonstrates a deep understanding of the situation, including social relationships, emotional context, and likely outcomes
-
-    - **High (60–79%)**  
-    - At least three or two key aspects are addressed clearly  
-    - The child shows good understanding overall but lacks detail or precision in one or more areas
-
-    - **Moderate (40–59%)**  
-    - Only one or two aspects are addressed explicitly  
-    - The child’s response is partial, limited to their own view or surface-level details
-
-    - **Low (20–39%)**  
-    - Some vague reference to the situation, but little alignment with the key aspects  
-    - The response lacks clear structure or understanding of roles or consequences
-
-    - **Very Low (0–19%)**  
-    - The response is unrelated, misinterprets the situation, or shows no clear understanding of the problem
-
-    **Format:**  
-    Only provide the similarity percentage.  
-    It MUST be in the following format: XX.X%  
-    Do NOT include explanations, reasoning, or any other text.  
-    The output must be between 5.0% and 95.9%.
-"""
-,
-    agent=Scenario_Analyst,
-    expected_output="XX.X"
+        """,
+        agent=Recorder,
+        context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
+        expected_output=bool
     )
 
+    Analyze_cause = Task(
+        description=f"""
+        **Task:**  
+        Analyze the provided resolution method:  
+        '**{cause_response}**'
+
+        Compare it to the target resolution strategy:  
+        '**{Analyse_cause}**'
+        """,
+        agent=Recorder,
+        context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
+        expected_output=bool
+    )
+
+    Analyze_subject = Task(
+        description=f"""
+       **Task:**  
+        Analyze the provided resolution method:  
+        '**{subject_response}**'
+
+        Compare it to the target resolution strategy:  
+        '**{Analyse_subject}**'
+        """,
+        agent=Recorder,
+        context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
+        expected_output=bool
+    )
 
     Record_Task = Task(
-    description=f"""
-    Collect and present the similarity scores from all analysts.  
-    Format the results as a structured list:  
-    ```
-    [A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%, S: XX.X%]
-    ```
-    Ensure there are **no additional comments** or explanations.
-    """,
-    agent=Recorder,
-    context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D,Scenario_Analysis],
-    expected_output="[A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%, S: XX.X%]"
+        description=f"""
+        Collect and present the similarity scores from all analysts.  
+        Format the results as a structured list:  
+        ```
+        [A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%, S: XX.X%]
+        ```
+        Ensure there are **no additional comments** or explanations.
+        """,
+        agent=Recorder,
+        context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
+        expected_output="[A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%, S: XX.X%]"
     )
 
 
 
     crew = Crew(
-        agents=[Analyst_A, Analyst_B, Analyst_C, Analyst_D,Scenario_Analyst, Recorder],
-        tasks=[Analyze_A, Analyze_B, Analyze_C, Analyze_D,Scenario_Analysis, Record_Task],
+        agents=[Analyst_A, Analyst_B, Analyst_C, Analyst_D, Recorder],
+        tasks=[Analyze_A, Analyze_B, Analyze_C, Analyze_D, Record_Task],
         verbose=False
     )
 
@@ -371,7 +389,7 @@ print(f"[So1_altruism: {social_result['So1']}%, So2_initiative: {social_result['
 output_data = {
     "prompt": prompt_text.strip(),
     "child_response": child_response,
-    "situation_response": situation_response,
+    "situation_response": "situation_response",
     "average_scores": {
         "A": average_scores["A"],
         "B": average_scores["B"],
