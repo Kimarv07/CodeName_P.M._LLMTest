@@ -109,7 +109,7 @@ for i in range(3):
     Analyst_cause = Agent(
         role="Senior Sentence Sentiment Analyst_cause",
         goal=f"Check the following answers and '{Analyse_cause}', determine whether they are correct or not and mark Yes or No.",
-        backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
+        backstory="""You're a teacher, and you look at your answers and your answers and see if they're right or wrong.
         Your role is to check if you have answered the right questions.
         The order may be changed, but in the case of an answer that deviates from the existing answer, a name that does not exist may be mentioned or a name that should be mentioned is omitted, and the wrong answer may be processed.""",
         verbose=False,
@@ -271,65 +271,48 @@ The value must be within the range of 5.0 to 95.9.
     #갈등 인물 확인
     Analyze_conflict = Task(
         description=f"""
-        **Task:**  
-        Analyze the provided resolution method:  
-        '**{conflict_response}**'
+        The task is determine whether {conflict_response} and {Analyse_conflict} match or not.
+        
+        The {Analyse_conflict} criteria contains names of characters, which are separated by commas. It is important to check if the characters name in {conflict_response} exactly match those in {Analyse_conflict}, ensuring no characters are added or omitted.
 
-        Compare it to the target resolution strategy:  
-        '**{Analyse_conflict}**'
+        It is also crucial to note that if the order of character names is changed or if conjunctions such as "and" are used, it should still be considered correct. In addition, the answer is not case sensitive.
 
-        The objective is to verify if the response in {conflict_response} matches the criteria set in {Analyse_conflict}.
+        Don't think about additional information such as the character's personality, only need to determine if the names match.
 
-        The {Analyse_conflict} criteria contains names of characters, which are separated by commas. It is important to check if the characters mentioned in {conflict_response} exactly match those in {Analyse_conflict}, ensuring no characters are added or omitted.
-
-        It is also crucial to note that if the order of character names is changed or if conjunctions such as "and" are used, it should still be considered correct.
-
-        For output management, if the response is correct, the output should be "Found a character who is the subject of conflict well." If the response is incorrect, the output should be "Didn't find the character that was the subject of conflict well."
+        For output management, if the response is correct, the output should be "true" If the response is incorrect, the output should be "false"
         """,
         agent=Analyst_conflict,
-        expected_output="Return only one of: 'Found a character who is the subject of conflict well.' or 'Didn't find the character that was the subject of conflict well'"
+        expected_output="Return only one of: 'true' or 'false'"
     )
 
     #갈등 이유를 확인하는 task -> O or X
     Analyze_cause = Task(
         description=f"""
-        **Task:**  
-        Analyze the provided resolution method:  
-        '**{cause_response}**'
-
-        Compare it to the target resolution strategy:  
-        '**{Analyse_cause}**'
-
         The task is to evaluate how well the response in {cause_response} aligns with the criteria defined in {Analyse_cause}.
 
         Begin by identifying the most important keywords from {Analyse_cause}, then check whether those keywords are present in {cause_response}. These keywords must be included for the response to be considered valid.
 
-        Finally, calculate and present the similarity rate between {cause_response} and {Analyse_cause}. The similarity must be expressed strictly in the format XX.X without any additional text or explanation.
+        For determining correctness, compare the keyword match rate and similarity to {Analyse_cause}. If the match rate and similarity are both 80% or higher, the response can be considered correct.
+
+        For output management, if the response is correct, output "true" If the response is incorrect, output "false"
         """,
         agent=Analyst_cause,
-        expected_output="XX.X"
+        expected_output="Return only one of: 'true' or 'false'"
     )
 
     #갈등 주제를 확인하는 Task
     Analyze_subject = Task(
         description=f"""
-       **Task:**  
-        Analyze the provided resolution method:  
-        '**{subject_response}**'
-
-        Compare it to the target resolution strategy:  
-        '**{Analyse_subject}**'
-
         The objective is to verify if the response in {subject_response} matches the criteria defined in {Analyse_subject}.
 
         The {Analyse_subject} criteria contains the most appropriate answer to the subject. To check this, first identify the most important keywords from {Analyse_subject} and verify whether these keywords are correctly included in {subject_response}. Additionally, if the response is in a negative form, confirm that the negative form is used appropriately.
 
         For determining correctness, compare the keyword match rate and similarity to {Analyse_subject}. If the match rate and similarity are both 80% or higher, the response can be considered correct.
 
-        For output management, if the response is correct, output "have an understanding of the subject of conflict." If the response is incorrect, output "don't understand the subject of conflict."
+        For output management, if the response is correct, output "true" If the response is incorrect, output "false"
         """,
         agent=Analyst_subject,
-        expected_output="Return only one of: 'Have an understanding of the subject of conflict.' or 'Don't understand the subject of conflict.'"
+        expected_output="Return only one of: 'true' or 'false'"
     )
 
     Record_Task = Task(
