@@ -38,7 +38,7 @@ Analyse_standard_A={"""Because habits need to be fixed, I will say it no matter 
 Analyse_standard_B={"""Because I don't like not fighting with friends, I will just ignore it."""}
 Analyse_standard_C={"""I will do it instead of my friend."""}
 Analyse_standard_D={"""I will calmly persuade the child to avoid fighting"""}
-Analyse_conflict={"NPC1 and NPC2"}
+Analyse_conflict={"NPC1, NPC2"}
 Analyse_cause={"What should I do to a friend who is playing with no group activities?"}
 Analyse_subject={"One member of the class project team didn't do any activities."}
 
@@ -57,9 +57,9 @@ for i in range(3):
         role="Senior Sentence Sentiment Analyst_A",
         goal=f"Determine how similar the child's proposed resolution method is to '{Analyse_standard_A}' and express the similarity as a percentage (rounded to one decimal place).",
         backstory="""You are an analyst who observes specific conflict situations and evaluates the resolution methods provided by children.
-    Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
-    not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
-    You must express the similarity as a percentage, rounded to one decimal place.""",
+        Your role is to assess how similar a child's proposed resolution method is to the given target resolution,
+        not by direct sentence matching but by comparing the **nature** of the resolution strategy itself.
+        You must express the similarity as a percentage, rounded to one decimal place.""",
         verbose=False,
         allow_delegation=False,
     )
@@ -193,10 +193,10 @@ The value must be within the range of 5.0 to 95.9.
     - **Very Low Similarity (0-19%)**: The response actively tries to resolve the issue, showing little to no inclination to ignore it.  
 
     **Format:**  
-Provide a single numerical value as a percentage (%), measured precisely.
-The output MUST be in the format: XX.X%.
-Do NOT include explanations, analysis, or any additional text.
-The value must be within the range of 5.0 to 95.9.
+    Provide a single numerical value as a percentage (%), measured precisely.
+    The output MUST be in the format: XX.X%.
+    Do NOT include explanations, analysis, or any additional text.
+    The value must be within the range of 5.0 to 95.9.
     """,
     agent=Analyst_B,
     expected_output="XX.X"
@@ -268,6 +268,7 @@ The value must be within the range of 5.0 to 95.9.
     expected_output="XX.X"
     )
 
+    #갈등 인물 확인
     Analyze_conflict = Task(
         description=f"""
         **Task:**  
@@ -277,13 +278,19 @@ The value must be within the range of 5.0 to 95.9.
         Compare it to the target resolution strategy:  
         '**{Analyse_conflict}**'
 
+        The objective is to verify if the response in {conflict_response} matches the criteria set in {Analyse_conflict}.
 
+        The {Analyse_conflict} criteria contains names of characters, which are separated by commas. It is important to check if the characters mentioned in {conflict_response} exactly match those in {Analyse_conflict}, ensuring no characters are added or omitted.
+
+        It is also crucial to note that if the order of character names is changed or if conjunctions such as "and" are used, it should still be considered correct.
+
+        For output management, if the response is correct, the output should be "Found a character who is the subject of conflict well." If the response is incorrect, the output should be "Didn't find the character that was the subject of conflict well."
         """,
-        agent=Recorder,
-        context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
-        expected_output=bool
+        agent=Analyst_conflict,
+        expected_output="Return only one of: 'Found a character who is the subject of conflict well.' or 'Didn't find the character that was the subject of conflict well'"
     )
 
+    #갈등 이유를 확인하는 task -> O or X
     Analyze_cause = Task(
         description=f"""
         **Task:**  
@@ -292,12 +299,18 @@ The value must be within the range of 5.0 to 95.9.
 
         Compare it to the target resolution strategy:  
         '**{Analyse_cause}**'
+
+        The task is to evaluate how well the response in {cause_response} aligns with the criteria defined in {Analyse_cause}.
+
+        Begin by identifying the most important keywords from {Analyse_cause}, then check whether those keywords are present in {cause_response}. These keywords must be included for the response to be considered valid.
+
+        Finally, calculate and present the similarity rate between {cause_response} and {Analyse_cause}. The similarity must be expressed strictly in the format XX.X without any additional text or explanation.
         """,
-        agent=Recorder,
-        context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
-        expected_output=bool
+        agent=Analyst_cause,
+        expected_output="XX.X"
     )
 
+    #갈등 주제를 확인하는 Task
     Analyze_subject = Task(
         description=f"""
        **Task:**  
@@ -306,10 +319,17 @@ The value must be within the range of 5.0 to 95.9.
 
         Compare it to the target resolution strategy:  
         '**{Analyse_subject}**'
+
+        The objective is to verify if the response in {subject_response} matches the criteria defined in {Analyse_subject}.
+
+        The {Analyse_subject} criteria contains the most appropriate answer to the subject. To check this, first identify the most important keywords from {Analyse_subject} and verify whether these keywords are correctly included in {subject_response}. Additionally, if the response is in a negative form, confirm that the negative form is used appropriately.
+
+        For determining correctness, compare the keyword match rate and similarity to {Analyse_subject}. If the match rate and similarity are both 80% or higher, the response can be considered correct.
+
+        For output management, if the response is correct, output "have an understanding of the subject of conflict." If the response is incorrect, output "don't understand the subject of conflict."
         """,
-        agent=Recorder,
-        context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
-        expected_output=bool
+        agent=Analyst_subject,
+        expected_output="Return only one of: 'Have an understanding of the subject of conflict.' or 'Don't understand the subject of conflict.'"
     )
 
     Record_Task = Task(
@@ -327,18 +347,20 @@ The value must be within the range of 5.0 to 95.9.
     )
 
 
-
     crew = Crew(
-        agents=[Analyst_A, Analyst_B, Analyst_C, Analyst_D, Recorder],
-        tasks=[Analyze_A, Analyze_B, Analyze_C, Analyze_D, Record_Task],
+        agents=[Analyst_A, Analyst_B, Analyst_C, Analyst_D, Analyst_conflict, Analyst_cause, Analyst_subject, Recorder],
+        tasks=[Analyze_A, Analyze_B, Analyze_C, Analyze_D, Analyze_conflict, Analyze_cause, Analyze_subject, Record_Task],
         verbose=False
     )
 
     result = crew.kickoff()
-
+    
     # 수정된 출력 추출 방식
     output = str(result).strip()
     print("Result:", output)
+    print(Analyze_conflict.output)
+    print(Analyze_cause.output)
+    print(Analyze_subject.output)
 
     # 정규식 파싱
     match = re.match(r"\[A:\s*([\d.]+)%,\s*B:\s*([\d.]+)%,\s*C:\s*([\d.]+)%,\s*D:\s*([\d.]+)%,\s*S:\s*([\d.]+)%\]",output)
@@ -365,19 +387,19 @@ ansB_weight=[0.06, -0.01, 0.11, -0.05, 0.75]
 ansC_weight=[0.08, 0.43, 0.16, 0.00, 0.14]
 ansD_weight=[-0.28, 0.52, 0.01, 0.03, -0.12]
 
-#성향 1 가중치: A:33 B:6 C:8 D:-28
+#성향 1 가중치 판단식
 social_result["So1"] = round(((average_scores["A"]*ansA_weight[0])+(average_scores["B"]*ansB_weight[0])+(average_scores["C"]*ansC_weight[0])+(average_scores["D"]*ansD_weight[0]))/4,2)
 
-#성향 2 가중치: A:28 B:-1 C:43 D:52
+#성향 2 가중치 판단식
 social_result["So2"] = round(((average_scores["A"]*ansA_weight[1])+(average_scores["B"]*ansB_weight[1])+(average_scores["C"]*ansC_weight[1])+(average_scores["D"]*ansD_weight[1]))/4,2)
 
-#성향 3 가중치: A:11 B:11 C:16 D:1 
+#성향 3 가중치 판단식
 social_result["So3"] = round(((average_scores["A"]*ansA_weight[2])+(average_scores["B"]*ansB_weight[2])+(average_scores["C"]*ansC_weight[2])+(average_scores["D"]*ansD_weight[2]))/4,2)
 
-#성향 4 가중치: A:5 B:-5 C:0 D:3
+#성향 4 가중치 판단식
 social_result["So4"] = round(((average_scores["A"]*ansA_weight[3])+(average_scores["B"]*ansB_weight[3])+(average_scores["C"]*ansC_weight[3])+(average_scores["D"]*ansD_weight[3]))/4,2)
 
-#성향 5 가중치: A:-61 B:75 C:14 D:-12
+#성향 5 가중치 판단식
 social_result["So5"] = round(((average_scores["A"]*ansA_weight[4])+(average_scores["B"]*ansB_weight[4])+(average_scores["C"]*ansC_weight[4])+(average_scores["D"]*ansD_weight[4]))/4,2)
 
 # 최종 출력

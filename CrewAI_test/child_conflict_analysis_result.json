@@ -1,0 +1,19 @@
+{
+    "prompt": "You have studied the countries that participated in the World Cup during social studies class. \nYour team decided to research Japan. \nEveryone divided their roles, and after school, you all gathered at your house to continue the research.\nHowever, there is one problem. One member of your group never participates and only plays around. \nThis student is just an ordinary acquaintance to you, but other group members also seem dissatisfied. \nHowever, if you tell this student their mistake, they might get angry and start a fight.\n\nWhat would you do in this situation?",
+    "child_response": "I will make a fun game out of the research and see if they join in. If they still don’t, I will just work with the others and not worry too much.",
+    "situation_response": "situation_response",
+    "average_scores": {
+        "A": 5.0,
+        "B": 11.8,
+        "C": 11.8,
+        "D": 11.8,
+        "S": 11.8
+    },
+    "social result": {
+        "So1": -0.0,
+        "So2": 3.12,
+        "So3": 0.96,
+        "So4": 0.0,
+        "So5": 1.51
+    }
+}
