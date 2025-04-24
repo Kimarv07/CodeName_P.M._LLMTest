@@ -320,13 +320,13 @@ The value must be within the range of 5.0 to 95.9.
         Collect and present the similarity scores from all analysts.  
         Format the results as a structured list:  
         ```
-        [A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%, S: XX.X%]
+        [A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%]
         ```
         Ensure there are **no additional comments** or explanations.
         """,
         agent=Recorder,
         context=[Analyze_A,Analyze_B,Analyze_C,Analyze_D],
-        expected_output="[A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%, S: XX.X%]"
+        expected_output="[A: XX.X%, B: XX.X%, C: XX.X%, D: XX.X%]"
     )
 
 
@@ -345,17 +345,57 @@ The value must be within the range of 5.0 to 95.9.
     print(Analyze_cause.output)
     print(Analyze_subject.output)
 
+    #str -> bool 파싱
+    def to_bool_postprocess(task_output) -> bool:
+        try:
+            # 문자열 변환 및 정규화
+            output_str = str(task_output).strip().lower()
+
+            # 정규식으로 'true' 또는 'false'만 허용
+            match = re.match(r'^(true|false)$', output_str)
+            if not match:
+                raise ValueError(f"Invalid boolean string (expected true/false): {output_str}")
+
+            # match 결과에 따라 True / False 반환
+            return match.group(1) == "true"
+
+        #값이 true나 false 가 아니면 오류처리
+        except Exception as e:
+            print(f"Failed to parse TaskOutput as boolean: {e}, so return value is false")
+            return False
+
+    #값 계산
+    def calculate_understand(is_conflict_right:bool, is_cause_right:bool,is_subject_right:bool) -> float:
+        total_persent = 0.0
+        if is_conflict_right:
+            total_persent += 25.0
+
+        if is_cause_right:
+            total_persent += 35.0
+
+        if is_subject_right:
+            total_persent += 40.0
+
+        return total_persent
+    
+    is_conflict_right = to_bool_postprocess(Analyze_conflict.output)
+    is_cause_right = to_bool_postprocess(Analyze_cause.output)
+    is_subject_right = to_bool_postprocess(Analyze_subject.output)
+    
+    total_understanding_degree = calculate_understand(is_conflict_right,is_cause_right,is_subject_right)
+    print(total_understanding_degree)
+
     # 정규식 파싱
-    match = re.match(r"\[A:\s*([\d.]+)%,\s*B:\s*([\d.]+)%,\s*C:\s*([\d.]+)%,\s*D:\s*([\d.]+)%,\s*S:\s*([\d.]+)%\]",output)
+    match = re.match(r"\[A:\s*([\d.]+)%,\s*B:\s*([\d.]+)%,\s*C:\s*([\d.]+)%,\s*D:\s*([\d.]+)%]",output)
     if match:
         scores["A"].append(float(match.group(1)))
         scores["B"].append(float(match.group(2)))
         scores["C"].append(float(match.group(3)))
         scores["D"].append(float(match.group(4)))
-        scores["S"].append(float(match.group(5)))
     else:
         print("Failed to parse:", output)
 
+    scores["S"].append(total_understanding_degree)
 
     end = time.time()
     print(f"Time: {end - start:.1f} seconds")
@@ -408,6 +448,12 @@ output_data = {
         "So3":social_result["So3"],
         "So4":social_result["So4"],
         "So5":social_result["So5"]
+    },
+    "Situation Answers":{
+        "conflict": is_conflict_right,
+        "cause": is_cause_right,
+        "subject": is_subject_right,
+        "total": total_understanding_degree
     }
 }
 

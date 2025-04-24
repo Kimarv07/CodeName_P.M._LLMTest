@@ -1,19 +1,25 @@
 {
     "prompt": "You have studied the countries that participated in the World Cup during social studies class. \nYour team decided to research Japan. \nEveryone divided their roles, and after school, you all gathered at your house to continue the research.\nHowever, there is one problem. One member of your group never participates and only plays around. \nThis student is just an ordinary acquaintance to you, but other group members also seem dissatisfied. \nHowever, if you tell this student their mistake, they might get angry and start a fight.\n\nWhat would you do in this situation?",
-    "child_response": "I will tell them that they have to help because it's not fair if only some of us do all the work. If they don’t listen, I will keep telling them until they do, even if they get mad at me.",
-    "situation_response": "One group member is not helping at all, and that makes it unfair for the rest of us who are trying hard. If we try to talk to them, they might get angry, so it’s hard to decide what to do. Everyone is feeling upset, and it could cause problems in the group.",
+    "child_response": "sdfnklxcvm,xcvljkqwejlasdjk.sdfvxcn,",
+    "situation_response": "situation_response",
     "average_scores": {
-        "A": 80.5,
+        "A": 5.0,
         "B": 5.0,
         "C": 5.0,
         "D": 5.0,
-        "S": 80.5
+        "S": 0.0
     },
     "social result": {
-        "So1": 6.47,
-        "So2": 6.81,
-        "So3": 2.56,
-        "So4": 0.98,
-        "So5": -11.31
+        "So1": 0.24,
+        "So2": 1.52,
+        "So3": 0.49,
+        "So4": 0.04,
+        "So5": 0.2
+    },
+    "Situation Answers": {
+        "conflict": false,
+        "cause": false,
+        "subject": false,
+        "total": 0.0
     }
 }
