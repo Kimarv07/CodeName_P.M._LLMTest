@@ -12,8 +12,6 @@ class SceneInfo:
     ScenarioOrder = []
     NpcData =  List[Dict[str, Any]]
 
-    LLMPrompt = ""
-
 class JSONReader:
     def __init__(self, file_path: str, list_columns: List[str] = None):
         """
