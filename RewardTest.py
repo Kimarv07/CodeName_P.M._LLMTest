@@ -8,18 +8,18 @@ load_dotenv()
 
 #보상 편지 생성에 사용할 정보들
 class Information:
-    ScenarioDialogue:List[str] = []
-    NpcData = List[Dict[str, Any]]
+    ScenarioDialogue:List[str] = [] #시나리오 다이얼로그
+    NpcData = List[Dict[str, Any]] #NPO 정보 데이터
+    ResponseData: str = ""
 
 #JSON 리더기
 #후에 DB 호출 방식으로 변경 예정
 class JSONReader:
     def __init__(self, file_path: str, list_columns: List[str] = None):
-        """
-        JSON 파일을 읽는 리더 클래스
-        :param file_path: JSON 파일 경로
-        :param list_columns: 리스트 형식으로 변환할 컬럼 이름 리스트 (필요할 경우 사용)
-        """
+        # JSON 파일을 읽는 리더 클래스
+        # :param file_path: JSON 파일 경로
+        # :param list_columns: 리스트 형식으로 변환할 컬럼 이름 리스트 (필요할 경우 사용)
+
         self.file_path = file_path
         self.list_columns = list_columns if list_columns else []
         self.data = self._read_json()
@@ -46,14 +46,14 @@ class JSONReader:
         return [row for row in self.data if condition_func(row)]
     
     def get_column_values(self, condition_func, column_name: str):
-        """
-        특정 조건을 만족하는 행에서 특정 속성(column) 값만 리스트로 반환하는 함수
-        :param condition_func: 특정 행을 선택하는 조건 함수
-        :param column_name: 가져오고 싶은 속성 이름
-        :return: 조건을 만족하는 행들의 특정 속성 값 리스트
-        """
+        #특정 조건을 만족하는 행에서 특정 속성(column) 값만 리스트로 반환하는 함수
+        #:param condition_func: 특정 행을 선택하는 조건 함수
+        #:param column_name: 가져오고 싶은 속성 이름
+        #:return: 조건을 만족하는 행들의 특정 속성 값 리스트
         return [row[column_name] for row in self.data if condition_func(row)]
-    
+
+
+   
 # 에이전트 정의
 
 #성격 분석 Agent
@@ -86,6 +86,22 @@ Analyze_Situation = Task(
     agent = Situation_Analyst
 )
 
+#사용자 답변 분석 Agent
+Response_Analyst = Agent(
+    role = "Agent for analysis and summary of the situation",
+    goal=f"",
+    backstory="""
+    """
+)
+
+#사용자 답변 분석 Task
+Analyze_Response = Task(
+    description=f"""
+    """,
+    agent = Response_Analyst,
+    context=[Analyze_Situation]
+)
+
 #편지 작성 Agent
 Letter_Writer = Agent(
     role = "Agent for collect and analyze information and produce letter-type results",
@@ -96,7 +112,7 @@ Letter_Writer = Agent(
 
 #편지 작성 Task
 Generate_Sentence = Task(
-        description=f"""
+    description=f"""
     """,
     agent = Letter_Writer,
     context=[Analyze_Personality, Analyze_Situation]
@@ -104,8 +120,8 @@ Generate_Sentence = Task(
 
 #crew 설정
 crew = Crew(
-    agents=[Personality_Analyst, Situation_Analyst, Letter_Writer],
-    tasks=[Analyze_Personality, Analyze_Situation, Generate_Sentence],
+    agents=[Personality_Analyst, Situation_Analyst, Response_Analyst, Letter_Writer],
+    tasks=[Analyze_Personality, Analyze_Situation, Analyze_Response, Generate_Sentence],
     verbose=False
 )
 
