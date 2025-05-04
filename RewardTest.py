@@ -9,7 +9,7 @@ load_dotenv()
 #보상 편지 생성에 사용할 정보들
 class Information:
     ScenarioDialogue:List[str] = [] #시나리오 다이얼로그
-    NpcData = List[Dict[str, Any]] #NPO 정보 데이터
+    NpcData: List[Dict[str, Any]] = [] #NPC 정보 데이터
     ResponseData: str = ""
 
 #JSON 리더기
@@ -59,14 +59,23 @@ class JSONReader:
 #성격 분석 Agent
 Personality_Analyst = Agent(
     role = "Agent for identifying character personality",
-    goal=f"",
+    goal=f"Your goal is to identify the character's character so that you can use it for future writing.",
     backstory="""
-"""
+    You are a writer who has to transfer and write to a particular character.
+    It has the task of writing the emotions and speech of the character as they are.
+    To do this, you have to interpret the character's personality with the given information and make it your own.
+    """
 )
 
 #성격 분석 Task
 Analyze_Personality = Task(
     description=f"""
+    Analyze the information in 'NpcData' and convert it into information that can be used for prompts, and store it in memory for use in other tasks later.
+
+    The 'NpcData'is here: {Information.NpcData}
+
+    Make sure the final result is a prompt message that can be used for some LLM.
+    Don't type any additional messages, but only print out the answers.
     """,
     agent = Personality_Analyst
 )
@@ -74,8 +83,10 @@ Analyze_Personality = Task(
 #상황 분석 Agent
 Situation_Analyst = Agent(
     role = "Agent for analysis and summary of the situation",
-    goal=f"",
+    goal=f"Read the given dialog and analyze what the situation is and summarize it simply.",
     backstory="""
+    You read the game's conversation log and simply organize it.
+    Read the content and figure out what each character did and what emotions they had.
     """
 )
 
@@ -88,15 +99,18 @@ Analyze_Situation = Task(
 
 #사용자 답변 분석 Agent
 Response_Analyst = Agent(
-    role = "Agent for analysis and summary of the situation",
-    goal=f"",
+    role = "Agent for analyze answers and check if the situation changes",
+    goal=f"The goal is to check the given situation and advice and to see which direction the situation will develop.",
     backstory="""
+    You should look at the given situation dialogs and user advice and make predictions about what will happen later.
+    You should determine what good results the user's answers will bring, become a counselor, and make a friendly prediction.
     """
 )
 
 #사용자 답변 분석 Task
 Analyze_Response = Task(
     description=f"""
+    
     """,
     agent = Response_Analyst,
     context=[Analyze_Situation]
@@ -115,7 +129,7 @@ Generate_Sentence = Task(
     description=f"""
     """,
     agent = Letter_Writer,
-    context=[Analyze_Personality, Analyze_Situation]
+    context=[Analyze_Personality, Analyze_Situation, Analyze_Response]
 )
 
 #crew 설정
@@ -126,3 +140,8 @@ crew = Crew(
 )
 
 result = crew.kickoff()
+
+
+if __name__ == "__main__":
+    NpcReader = JSONReader("DataFile\CharacterInfo_J.json", list_columns=["personality", "speech"])
+    Information.NpcData = NpcReader.get_data()
