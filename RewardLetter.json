@@ -1,0 +1,11 @@
+{
+    "description": "\n    You have to write a letter. But you have to know that you have to pretend to be someone else and use it.\n    It will teach you the personality and way of speaking so that you can imitate the person's way of speaking.\n\n    The information containing the characters that need to be imported is as follows.\n    Here is the NPC Data: []\n\n    It is important to keep in mind that the situation information to be grasped is as follows, and that changes after that situation must be predicted.\n    Here is the situation Data: []\n\n    Finally, the future message should be included in the content by looking at the following answers to predict how the situation will flow positively.\n    You should check the situation above and think about what will change afterward if you take action according to the answer. \n    Here is the answer data: \n\n    You can write in the form of a letter by combining all the above data.\n    ",
+    "name": null,
+    "expected_output": "Only print out the answer",
+    "summary": "\n    You have to write a letter....",
+    "raw": "Thought: I need the dialogue to understand the situation and characters.  Please provide the dialogue  \n\n\n",
+    "pydantic": null,
+    "json_dict": null,
+    "agent": "Agent for collect and analyze information and produce letter-type results",
+    "output_format": "raw"
+}

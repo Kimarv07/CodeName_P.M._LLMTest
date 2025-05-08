@@ -1,3 +1,52 @@
 {
-    "dialogues": []
+    "dialogues": [
+        {
+            "speaker": "Marong",
+            "text": "Hello, I've never seen you around before. How are you doing today?"
+        },
+        {
+            "speaker": "Yongyong",
+            "text": "Ah, hi! I'm doing great, thanks for asking. Just excited for some fun."
+        },
+        {
+            "speaker": "Marong",
+            "text": "That sounds wonderful! So, what role do you think you'll play in our group activities today?"
+        },
+        {
+            "speaker": "Yongyong",
+            "text": "Honestly, it doesn't matter to me. I'm just here to have a good time."
+        },
+        {
+            "speaker": "Marong",
+            "text": "I see. Well, I was thinking about the book we're supposed to read for our group activities today. Have you read it?"
+        },
+        {
+            "speaker": "Yongyong",
+            "text": "Nah, I didn't bother. I'm not really into reading, to be honest."
+        },
+        {
+            "speaker": "Marong",
+            "text": "Okay, no problem. Did you happen to bring a copy of the book with you, just in case?"
+        },
+        {
+            "speaker": "Yongyong",
+            "text": "Ha! Nope, I didn't even think about it. It's way more fun to play around than sit down and read a book."
+        },
+        {
+            "speaker": "Marong",
+            "text": "I understand what you mean, but our teacher did give us homework to do together. Just thought I'd mention it."
+        },
+        {
+            "speaker": "Yongyong",
+            "text": "Oh, yeah, yeah. Like I said, I'm not really concerned about it. There are plenty of other people who can help me with that stuff. Can we just focus on having fun instead?"
+        },
+        {
+            "speaker": "Marong",
+            "text": "Well... I guess that's your decision."
+        },
+        {
+            "speaker": "Yongyong",
+            "text": "Exactly!"
+        }
+    ]
 }
